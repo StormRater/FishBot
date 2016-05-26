@@ -5,11 +5,8 @@ from .utils import checks
 from __main__ import send_cmd_help, settings
 import os
 import logging
-<<<<<<< HEAD
 import asyncio
 
-=======
->>>>>>> patch-3
 
 class Mod:
     """Moderation tools."""
@@ -23,11 +20,7 @@ class Mod:
         self.past_names = fileIO("data/mod/past_names.json", "load")
 
     @commands.group(pass_context=True, no_pm=True)
-<<<<<<< HEAD
     @checks.serverowner_or_permissions(administrator=True)
-=======
-    @checks.serverowner_or_permissions(manage_server=True)
->>>>>>> patch-3
     async def modset(self, ctx):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
@@ -61,26 +54,11 @@ class Mod:
     async def kick(self, ctx, user: discord.Member, *reason):
         """Kicks user."""
         author = ctx.message.author
-        server = ctx.message.server
-        r = str(reason)
-        r = r.replace("'", "")
-        r = r.replace(")", "")
-        r = r.replace("(", "")
-        r = r.replace(",", "")
-        if r == "": 
-            r = "None specified." 
         try:
-            await self.bot.send_message(user, "You were kicked from **{}** for `{}`.\n".format(server.name, r))
             await self.bot.kick(user)
-<<<<<<< HEAD
             logger.info("{}({}) kicked {}({})".format(
                 author.name, author.id, user.name, user.id))
             await self.bot.say("**{}** was kicked by **{}**.\nReason: `{}`".format(user.name, author.name, reason))
-=======
-            logger.info("{}({}) kicked {}({}) for {}".format(
-                author.name, author.id, user.name, user.id, r))
-            await self.bot.say("**{}** was kicked by **{}**.\nReason: `{}`".format(user.name, author.name, r))
->>>>>>> patch-3
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
@@ -93,55 +71,14 @@ class Mod:
 
         Minimum 0 days, maximum 7. Defaults to 0."""
         author = ctx.message.author
-        server = ctx.message.server
-        r = str(reason)
-        r = r.replace("'", "")
-        r = r.replace(")", "")
-        r = r.replace("(", "")
-        r = r.replace(",", "")
-        if r == "":
-            r = "None specified." 
         if days < 0 or days > 7:
             await self.bot.say("Invalid days. Must be between 0 and 7.")
             return
         try:
-            await self.bot.send_message(user, "You were banned from **{}** for `{}`.".format(server.name, r))
             await self.bot.ban(user, days)
-            logger.info("{}({}) banned {}({}) for {], deleting {} days worth of messages".format(
-                author.name, author.id, user.name, user.id, r, str(days)))
-            await self.bot.say("{} was banned by {}.\nCleared {} days worth of messages.\nReason: `{}`".format(user.name, author.name, days, r)) 
-        except discord.errors.Forbidden:
-            await self.bot.say("I'm not allowed to do that.")
-        except Exception as e:
-            print(e)
-            
-    @commands.command(no_pm=True, pass_context=True)
-    @checks.admin_or_permissions(ban_members=True)
-    async def softban(self, ctx, user: discord.Member, *reason):
-        """Softbans the user, deleting 24 hours worth of messages."""
-        author = ctx.message.author
-        server = ctx.message.server
-        r = str(reason)
-        r = r.replace("'", "")
-        r = r.replace(")", "")
-        r = r.replace("(", "")
-        r = r.replace(",", "")
-        if r == "": 
-            r = "None specified." 
-        days = 0
-        try:
-            await self.bot.send_message(user, "You were softbanned from **{}** for `{}`.\nThis means the guys in charge wanted all your messages gone quickly, so they banned and unbanned you again.\nFeel free to rejoin at anytime!".format(server.name, r))
-            await self.bot.ban(user, days)
-<<<<<<< HEAD
             logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
                 author.name, author.id, user.name, user.id, str(days)))
             await self.bot.say("**{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}`".format(user.name, author.name, days, reason))
-=======
-            await self.bot.unban(server, user)
-            logger.info("{}({}) softbanned {}({}) for {}, deleting 24 hours worth of messages".format(
-                author.name, author.id, user.name, user.id, r))
-            await self.bot.say("**{}** was softbanned by **{}**.\nCleared 24 hours worth of messages.\nReason: `{}`".format(user.name, author.name, r)) 
->>>>>>> patch-3
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
@@ -186,7 +123,6 @@ class Mod:
             number = 1
         author = ctx.message.author
         message = ctx.message
-<<<<<<< HEAD
         channel = ctx.message.channel
         logger.info("{}({}) deleted {} messages containing '{}' in channel {}".format(author.name,
             author.id, str(number), text, message.channel.name))
@@ -210,11 +146,6 @@ class Mod:
         cmdmsg = ctx.message
         if self.bot.user.bot:
             print("Your discord.py is outdated, defaulting to slow deletion.")
-=======
-        cmdmsg = message
-        logger.info("{}({}) deleted {} messages containing '{}' in channel {}".format(
-            author.name, author.id, str(number), text, message.channel.name))
->>>>>>> patch-3
         try:
             if number > 0 and number < 10000:
                 while True:
@@ -222,26 +153,17 @@ class Mod:
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
                         if number == 0:
                             await self._delete_message(cmdmsg)
-<<<<<<< HEAD
                             await asyncio.sleep(0.25)
                             return
                         if text in x.content:
                             await self._delete_message(x)
                             await asyncio.sleep(0.25)
-=======
-                            return
-                        if text in x.content:
-                            await self._delete_message(x)
->>>>>>> patch-3
                             number -= 1
                         new = True
                         message = x
                     if not new or number == 0:
                         await self._delete_message(cmdmsg)
-<<<<<<< HEAD
                         await asyncio.sleep(0.25)
-=======
->>>>>>> patch-3
                         break
         except discord.errors.Forbidden:
             await self.bot.send_message(message.channel, "I need permissions"
@@ -279,15 +201,9 @@ class Mod:
     async def legacy_cleanup_user_messages(self, ctx, user, number):
         author = ctx.message.author
         message = ctx.message
-<<<<<<< HEAD
         cmdmsg = ctx.message
         if self.bot.user.bot:
             print("Your discord.py is outdated, defaulting to slow deletion.")
-=======
-        cmdmsg = message
-        logger.info("{}({}) deleted {} messages made by {}({}) in channel {}".format(
-            author.name, author.id, str(number), user.name, user.id, message.channel.name))
->>>>>>> patch-3
         try:
             if number > 0 and number < 10000:
                 while True:
@@ -295,26 +211,17 @@ class Mod:
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
                         if number == 0:
                             await self._delete_message(cmdmsg)
-<<<<<<< HEAD
                             await asyncio.sleep(0.25)
                             return
                         if x.author.id == user.id:
                             await self._delete_message(x)
                             await asyncio.sleep(0.25)
-=======
-                            return
-                        if x.author.id == user.id:
-                            await self._delete_message(x)
->>>>>>> patch-3
                             number -= 1
                         new = True
                         message = x
                     if not new or number == 0:
                         await self._delete_message(cmdmsg)
-<<<<<<< HEAD
                         await asyncio.sleep(0.25)
-=======
->>>>>>> patch-3
                         break
         except discord.errors.Forbidden:
             await self.bot.send_message(ctx.channel, "I need permissions "
@@ -331,7 +238,6 @@ class Mod:
             number = 1
         author = ctx.message.author
         channel = ctx.message.channel
-<<<<<<< HEAD
         logger.info("{}({}) deleted {} messages in channel {}".format(author.name,
             author.id, str(number), channel.name))
         if self.bot.user.bot and self.discordpy_updated():
@@ -347,18 +253,11 @@ class Mod:
         channel = ctx.message.channel
         if self.bot.user.bot:
                 print("Your discord.py is outdated, defaulting to slow deletion.")
-=======
-        logger.info("{}({}) deleted {} messages in channel {}".format(
-            author.name, author.id, str(number), channel.name))
->>>>>>> patch-3
         try:
             if number > 0 and number < 10000:
                 async for x in self.bot.logs_from(channel, limit=number + 1):
                     await self._delete_message(x)
-<<<<<<< HEAD
                     await asyncio.sleep(0.25)
-=======
->>>>>>> patch-3
         except discord.errors.Forbidden:
             await self.bot.send_message(channel, "I need permissions to manage messages in this channel.")
 
@@ -644,7 +543,6 @@ class Mod:
         else:
             await self.bot.say("That user doesn't have any recorded name change.")
 
-<<<<<<< HEAD
     def discordpy_updated(self):
         try:
             assert self.bot.purge_from
@@ -652,8 +550,6 @@ class Mod:
             return False
         return True
 
-=======
->>>>>>> patch-3
     async def _delete_message(self, message):
         try:
             await self.bot.delete_message(message)
@@ -683,13 +579,8 @@ class Mod:
         server = message.server
         can_delete = message.channel.permissions_for(server.me).manage_messages
 
-<<<<<<< HEAD
         if (message.author.id == self.bot.user.id or 
         self.immune_from_filter(message) or not can_delete): # Owner, admins and mods are immune to the filter
-=======
-        # Owner, admins and mods are immune to the filter
-        if message.author.id == self.bot.user.id or self.immune_from_filter(message) or not can_delete:
->>>>>>> patch-3
             return
 
         if server.id in self.filter.keys():
@@ -762,8 +653,4 @@ def setup(bot):
     n = Mod(bot)
     bot.add_listener(n.check_filter, "on_message")
     bot.add_listener(n.check_names, "on_member_update")
-<<<<<<< HEAD
     bot.add_cog(n)
-=======
-    bot.add_cog(n)
->>>>>>> patch-3
