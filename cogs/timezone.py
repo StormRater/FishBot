@@ -26,7 +26,13 @@ class Timezone:
 
     For the list of supported timezones, see here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            msg = "**__Timezone__**\n"
+            msg += "*Version: 1.2*\n"
+            msg += "*Updated: 19th May, 2016*\n"
+            msg += "**What's new?**\n"
+            msg += "Added `!time set <user>`. Available to the Admins, to correct those pesky trolls, or to help people out!\n"
+            msg += "For more help, see <https://fishyfing.xyz/timezone.html>"
+            await self.bot.say(msg)
 
     @time.group(pass_context=True, no_pm=True)
     async def tz(self, ctx, *, tz):
@@ -55,7 +61,7 @@ class Timezone:
     async def user(self, ctx, user : discord.Member=None):
         """Shows the current time for user."""
         if not user:
-            await self.bot.say("**That isn't a user!**")
+            await self.bot.say("That isn't a user!")
         else:
             if self.account_check(user.id):
                 tz = self.check_time(user.id)
@@ -67,12 +73,36 @@ class Timezone:
                 await self.bot.say("That user hasn't set their timezone.")
 
     @time.command(pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(manage_server=True)
+    async def set(self, ctx, user: discord.Member, *, tz):
+        """Allows the mods to edit timezones"""
+        author = ctx.message.author
+        if user is None:
+            user = author
+
+        if tz is None:
+            await self.bot.say('That timezone is invalid.')
+            return
+        else:
+            space = " "
+            timezone = tz.split(space, 1)[0]
+            if timezone in all_timezones:
+                if "'" in tz:
+                    timezone = timezone.replace("'", "")
+                self.usertime[user.id] = timezone
+                fileIO("data/timezone/users.json", "save", self.usertime)
+                await self.bot.say('Successfully set {}\'s timezone.'.format(user.name))
+            else:
+                await self.bot.say("**Error:** Unrecognised timezone. Try `!time set @user Continent/City`")
+
+
+    @time.command(pass_context=True, no_pm=True)
     async def me(self, ctx):
         """Sets your timezone. For various things. 
         Usage: !time me Continent/City"""
         user = ctx.message.author
-        tz = str(ctx.message.content[len(ctx.prefix+ctx.command.name)+1:])
-        tz = tz[3:]
+        tz = str(ctx.message.content[len(ctx.prefix+ctx.command.name)+1:]) 
+        tz = tz[3:] 
         if tz in all_timezones:
             exist = True
         else:
