@@ -337,7 +337,7 @@ class Audio:
         use_avconv = self.settings["AVCONV"]
         volume = self.get_server_settings(server)["VOLUME"] / 100
         options = \
-            '-filter "volume=volume={}" -b:a 64k -bufsize 64k'.format(volume)
+            '-filter "volume=volume={}"'.format(volume) # -b:a 128k -bufsize 128k
 
         try:
             voice_client.audio_player.process.kill()
