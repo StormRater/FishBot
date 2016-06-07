@@ -1481,11 +1481,14 @@ class Audio:
         if self.is_playing(server):
             song = self.queue[server.id]["NOW_PLAYING"]
             m, s = divmod(song.duration, 60)
+            h, m = divmod(m, 60)
+            if h == 0:
+                h == ""
             if song:
                 msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
-                       "**Views:** {}\n**Duration:** {}:{}\n\n<{}>".format(
+                       "**Views:** {}\n**Duration:** {}:{}:{}\n\n<{}>".format(
                            song.title, song.creator, song.uploader,
-                           song.view_count, m, s, song.webpage_url))
+                           song.view_count, h, m, s, song.webpage_url))
                 await self.bot.say(msg.replace("**Author:** None\n", ""))
             else:
                 await self.bot.say("I don't know what this song is either.")
