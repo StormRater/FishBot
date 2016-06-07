@@ -1482,6 +1482,8 @@ class Audio:
             song = self.queue[server.id]["NOW_PLAYING"]
             m, s = divmod(song.duration, 60)
             h, m = divmod(m, 60)
+            if h < 10:
+                h = "0" + str(h)
             dur = "%d:%02d:%02d" % (h, m, s)
             if song:
                 msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
