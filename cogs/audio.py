@@ -1482,7 +1482,7 @@ class Audio:
             song = self.queue[server.id]["NOW_PLAYING"]
             m, s = divmod(song.duration, 60)
             h, m = divmod(m, 60)
-            duration = "%d:%02d:%02d" % (h, m, s)
+            duration = ("%d:%02d:%02d" % (h, m, s))
             if song:
                 msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
                        "**Views:** {}\n**Duration:** \n\n<{}>".format(
