@@ -1485,10 +1485,9 @@ class Audio:
             dur = "%d:%02d:%02d".format(h, m, s)
             if song:
                 msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
-                       "**Views:** {}\n**Duration:** {}d:{}02d:{}02d\n\n<{}>".format(
+                       "**Views:** {}\n**Duration:** {}\n\n<{}>".format(
                            song.title, song.creator, song.uploader,
                            song.view_count, str(dur), song.webpage_url))
-                msg.replace("**Duration:** :", "**Duration:** ")
                 await self.bot.say(msg.replace("**Author:** None\n", ""))
             else:
                 await self.bot.say("I don't know what this song is either.")
