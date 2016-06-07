@@ -1480,11 +1480,12 @@ class Audio:
         server = ctx.message.server
         if self.is_playing(server):
             song = self.queue[server.id]["NOW_PLAYING"]
+            m, s = divmod(song.duration, 60)
             if song:
                 msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
-                       "**Views:** {}\n**Duration:** {}\n\n<{}>".format(
+                       "**Views:** {}\n**Duration:** {}:{}\n\n<{}>".format(
                            song.title, song.creator, song.uploader,
-                           song.view_count, song.duration, song.webpage_url))
+                           song.view_count, m, s, song.webpage_url))
                 await self.bot.say(msg.replace("**Author:** None\n", ""))
             else:
                 await self.bot.say("I don't know what this song is either.")
