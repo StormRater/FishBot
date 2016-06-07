@@ -1489,6 +1489,7 @@ class Audio:
                            song.title, song.creator, song.uploader,
                            song.view_count, str(dur), song.webpage_url))
                 msg.replace ("**Duration:** 0:", "**Duration:** ")
+                print(msg)
                 await self.bot.say(msg.replace("**Author:** None\n", ""))
             else:
                 await self.bot.say("I don't know what this song is either.")
