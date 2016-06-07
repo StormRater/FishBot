@@ -1487,7 +1487,7 @@ class Audio:
                 msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
                        "**Views:** {}\n**Duration:** {}d:{}02d:{}02d\n\n<{}>".format(
                            song.title, song.creator, song.uploader,
-                           song.view_count, dur, song.webpage_url))
+                           song.view_count, str(dur), song.webpage_url))
                 msg.replace("**Duration:** :", "**Duration:** ")
                 await self.bot.say(msg.replace("**Author:** None\n", ""))
             else:
