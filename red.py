@@ -2,7 +2,7 @@ from discord.ext import commands
 import discord
 from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
-import json
+from cogs.utils.chat_formatting import inline 
 import asyncio
 import os
 import time
@@ -79,7 +79,17 @@ async def on_command_error(error, ctx):
     elif isinstance(error, commands.BadArgument):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.DisabledCommand):
-        await bot.send_message(ctx.message.channel, "That command is disabled.")
+        await bot.send_message(ctx.message.channel,  
+            "That command is disabled.") 
+    elif isinstance(error, commands.CommandInvokeError): 
+        logger.exception("Exception in command '{}'".format( 
+            ctx.command.qualified_name), exc_info=error.original) 
+        oneliner = "Error in command '{}' - {}: {}".format( 
+            ctx.command.qualified_name, type(error.original).__name__, 
+            str(error.original)) 
+        await ctx.bot.send_message(ctx.message.channel, inline(oneliner)) 
+    else: 
+        logger.exception(type(error).__name__, exc_info=error) 
 
 async def send_cmd_help(ctx):
     if ctx.invoked_subcommand:
@@ -130,14 +140,11 @@ def user_allowed(message):
 
 
 async def get_oauth_url():
-    endpoint = "https://discordapp.com/api/oauth2/applications/@me"
-    if bot.headers.get('authorization') is None:
-        bot.headers['authorization'] = "Bot {}".format(settings.email)
-
-    async with bot.session.get(endpoint, headers=bot.headers) as resp:
-        data = await resp.json()
-
-    return discord.utils.oauth_url(data.get('id'))
+    try: 
+        data = await bot.application_info() 
+    except AttributeError: 
+        return "Your discord.py is outdated. Couldn't retrieve invite link." 
+    return discord.utils.oauth_url(data.id) 
 
 
 def check_folders():
@@ -381,12 +388,16 @@ if __name__ == '__main__':
         loop.run_until_complete(main())
     except discord.LoginFailure:
         logger.error(traceback.format_exc())
-        print("Invalid login credentials. Restart Red and configure it"
-              " properly.")
-        shutil.copy('data/red/settings.json',
-                    'data/red/settings-{}.bak'.format(int(time.time())))
-        # Hopefully this won't backfire in case of discord servers' problems
-        os.remove('data/red/settings.json')
+        choice = input("Invalid login credentials. " 
+            "If they worked before Discord might be having temporary " 
+            "technical issues.\nIn this case, press enter and " 
+            "try again later.\nOtherwise you can type 'reset' to " 
+            "delete the current configuration and redo the setup process " 
+            "again the next start.\n> ") 
+        if choice.strip() == "reset": 
+            shutil.copy('data/red/settings.json', 
+                        'data/red/settings-{}.bak'.format(int(time.time()))) 
+            os.remove('data/red/settings.json') 
     except:
         logger.error(traceback.format_exc())
         loop.run_until_complete(bot.logout())

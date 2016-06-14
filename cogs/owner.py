@@ -302,23 +302,28 @@ class Owner:
             await self.bot.say("Token set. Restart me.")
             log.debug("Just converted to a bot account.")
             
-    @_set.command(pass_context=True)
-    @checks.is_owner()
-    async def stream(self, ctx, stream=None, *, status=None):
-        """Sets Red's streaming status
 
-        Leaving this empty will clear it."""
-
-        if status:
-            status = status.strip()
-            if "twitch.tv/" not in stream:
-                stream = "https://www.twitch.tv/" + stream
-            await self.bot.change_status(discord.Game(type=1, url=stream, name=status))
-            log.debug('Owner has set streaming status and url to "{}" and {}'.format(status, stream))
-        else:
-            await self.bot.change_status(None)
-            log.debug('status cleared by owner')
-        await self.bot.say("Done.")
+    @_set.command(pass_context=True) 
+    @checks.is_owner() 
+    async def stream(self, ctx, stream_name=None, *, status=None): 
+        """Sets Red's streaming status 
+ 
+        Leaving both stream and status empty will clear it.""" 
+ 
+        if status: 
+            status = status.strip() 
+            if "twitch.tv/" not in stream: 
+                stream = "https://www.twitch.tv/" + stream 
+            await self.bot.change_status(discord.Game(type=1, url=stream, name=status)) 
+            log.debug('Owner has set streaming status and url to "{}" and {}'.format(status, stream)) 
+        elif stream is not None: 
+            await send_cmd_help(ctx) 
+            return 
+        else: 
+            await self.bot.change_status(None) 
+            log.debug('status cleared by owner') 
+        await self.bot.say("Done.") 
+ 
 
     @commands.command()
     @checks.is_owner()
