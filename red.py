@@ -22,7 +22,7 @@ import traceback
 #
 
 description = """
-Red - A multifunction Discord bot by Twentysix
+MonsterLyrics - A fully modular Discord Bot forked from Red!
 """
 
 formatter = commands.HelpFormatter(show_check_failure=False)
