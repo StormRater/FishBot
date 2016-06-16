@@ -984,7 +984,7 @@ class Audio:
 
         self.settings["MAX_CACHE"] = size
         await self.bot.say("Max cache size set to {} MB.".format(size))
-        self.save_settings
+        self.save_settings()
 
     @audioset.command(name="maxlength")
     @checks.is_owner()
@@ -1625,16 +1625,22 @@ class Audio:
         server = ctx.message.server
         if self.is_playing(server):
             song = self.queue[server.id]["NOW_PLAYING"]
-            m, s = divmod(song.duration, 60)
-            dur = "%02d:%02d" % (m, s)
             if song:
-                msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
-                       "**Views:** {}\n**Duration:** {}\n\n<{}>".format(
+                if not hasattr(song, 'creator'):
+                    song.creator = None
+                if not hasattr(song, 'view_count'):
+                    song.view_count = None
+                if not hasattr(song, 'uploader'):
+                    song.uploader = None
+                msg = ("**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
+                       "**Views:** {}\n\n<{}>".format(
                            song.title, song.creator, song.uploader,
-                           song.view_count, str(dur), song.webpage_url))
-                await self.bot.say(msg.replace("**Author:** None\n", ""))
+                           song.view_count, song.webpage_url))
+                await self.bot.say(msg.replace("**Author:** None\n", "")
+                    .replace("**Views:** None\n", "")
+                    .replace("**Uploader:** None\n", ""))
             else:
-                await self.bot.say("I don't know what this song is either.")
+                await self.bot.say("Darude - Sandstorm.")
         else:
             await self.bot.say("I'm not playing anything on this server.")
 
