@@ -346,32 +346,10 @@ class Owner:
     @checks.is_owner()
     async def join(self, invite_url: discord.Invite=None):
         """Joins new server"""
-        if hasattr(self.bot.user, 'bot') and self.bot.user.bot is True:
-            # Check to ensure they're using updated discord.py
-            msg = ("I have a **BOT** tag, so I must be invited with an OAuth2"
-                   " link:\nFor more information: "
-                   "https://twentysix26.github.io/"
-                   "Red-Docs/red_guide_bot_accounts/#bot-invites")
-            await self.bot.say(msg)
-            if hasattr(self.bot, 'oauth_url'):
-                await self.bot.whisper("Here's my OAUTH2 link:\n{}".format(
-                    self.bot.oauth_url))
-            return
-
-        if invite_url is None:
-            await self.bot.say("I need a Discord Invite link for the "
-                               "server you want me to join.")
-            return
-
-        try:
-            await self.bot.accept_invite(invite_url)
-            await self.bot.say("Server joined.")
-            log.debug("We just joined {}".format(invite_url))
-        except discord.NotFound:
-            await self.bot.say("The invite was invalid or expired.")
-        except discord.HTTPException:
-            await self.bot.say("I wasn't able to accept the invite."
-                               " Try again.")
+        msg = ("I have a **BOT** tag, so I must be invited with an OAuth2"
+               " link:\nMore perms: l.fishyfing.xyz/moreperms (allows admin stuffs)"
+               " \nLess perms: l.fishyfing.xyz/lessperms (allows general functionality)")
+        await self.bot.say(msg)
 
     @commands.command(pass_context=True)
     @checks.is_owner()
@@ -395,7 +373,7 @@ class Owner:
     async def servers(self, ctx):
         """Lists and allows to leave servers"""
         owner = ctx.message.author
-        servers = list(self.bot.servers)
+        servers = list.sorted(self.bot.servers)
         server_list = {}
         msg = ""
         for i in range(0, len(servers)):
@@ -413,6 +391,12 @@ class Owner:
                     break
             else:
                 break
+
+    @commands.command(pass_context=True)
+    async def users(self, ctx):
+        """Current total user count"""
+        users = len(set(bot.get_all_members()))
+        await self.bot.say(users)    
 
     async def leave_confirmation(self, server, owner, ctx):
         if not ctx.message.channel.is_private:
