@@ -347,8 +347,8 @@ class Owner:
     async def join(self, invite_url: discord.Invite=None):
         """Joins new server"""
         msg = ("I have a **BOT** tag, so I must be invited with an OAuth2"
-               " link:\nMore perms: https://l.fishyfing.xyz/moreperms (allows admin stuffs)"
-               " \nLess perms: https://l.fishyfing.xyz/lessperms (allows general functionality)")
+               " link:\n**More perms:** https://l.fishyfing.xyz/moreperms *(allows admin stuffs)*"
+               " \n**Less perms:** https://l.fishyfing.xyz/lessperms *(allows general functionality)*")
         await self.bot.say(msg)
 
     @commands.command(pass_context=True)
