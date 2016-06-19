@@ -343,7 +343,6 @@ class Owner:
         await self.bot.logout()
 
     @commands.command()
-    @checks.is_owner()
     async def join(self, invite_url: discord.Invite=None):
         """Joins new server"""
         msg = ("I have a **BOT** tag, so I must be invited with an OAuth2"
