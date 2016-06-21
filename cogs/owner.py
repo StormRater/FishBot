@@ -405,7 +405,7 @@ class Owner:
             return 
         owner = discord.utils.get(self.bot.get_all_members(), id=settings.owner) 
         author = ctx.message.author 
-        sender = "New message from `{} ({})` on server `{}`:\n\n".format(author, author.id, ctx.server.name) 
+        sender = "New message from `{} ({})` on server `{}`:\n\n".format(author, author.id, message.server.name) 
         message = sender + message 
         try: 
             await self.bot.send_message(owner, message) 
