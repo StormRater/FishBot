@@ -397,6 +397,41 @@ class Owner:
         users = len(set(bot.get_all_members()))
         await self.bot.say(users)    
 
+    @commands.command(pass_context=True) 
+    async def contact(self, ctx, *, message : str): 
+        """Sends message to the owner""" 
+        if settings.owner == "id_here": 
+            await self.bot.say("I have no owner set.") 
+            return 
+        owner = discord.utils.get(self.bot.get_all_members(), id=settings.owner) 
+        author = ctx.message.author 
+        sender = "New message from `{} ({})` on server `{}`:\n\n".format(author, author.id, ctx.server.name) 
+        message = sender + message 
+        try: 
+            await self.bot.send_message(owner, message) 
+        except discord.errors.InvalidArgument: 
+            await self.bot.say("I cannot send your message, I'm unable to find" 
+                               "my owner... *sigh*") 
+        except discord.errors.HTTPException: 
+            await self.bot.say("Your message is too long.") 
+        except: 
+            await self.bot.say("I'm unable to deliver your message. Sorry.") 
+ 
+    @commands.command() 
+    async def info(self): 
+        """Shows info about the MonsterLyrics bot"""
+        msg = "Hey there! I'm a _fully modular_ bot made by Twentysix and modified by the ***MonsterLyrics Team***.\n"
+        msg += "Some stuff about me:\n"
+        msg += "\n"
+        msg += "**Language:** Python/discord.py\n"
+        msg += "**Owner:** <@!116079569349378049>\n"
+        msg += "**Scrutinise my code:** <https://fishyfing.xyz/github>\n"
+        msg += "**Need more help? Visit the official server and ping me!** <https://discord.me/Red-DiscordBot>\n"
+        msg += "**More info:** <https://fishyfing.xyz/bot.html/>\n"
+        msg += "**Want me on your server? Use this link:** <https://fishyfing.xyz/invite>"
+        await self.bot.say(msg) 
+ 
+
     async def leave_confirmation(self, server, owner, ctx):
         if not ctx.message.channel.is_private:
             current_server = ctx.message.server

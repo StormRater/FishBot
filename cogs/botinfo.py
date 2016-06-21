@@ -53,33 +53,20 @@ class BotInfo:
     #     ret += " members.\n"
     #     await self.bot.say(ret)
 
-    @commands.command(pass_context=True)
-    async def contact(self, ctx, *, message: str):
-        """Send a message to my owner"""
-        author = ctx.message.author.name
-        server = ctx.message.server.name
-        owner = utils.find(lambda mem: str(mem.id) == settings.owner,
-                           self.bot.get_all_members())
-        message = "A message from {} on {}:\n\t```{}```".format(
-            author, server, message)
-        if owner is not None:
-            await self.bot.send_message(owner, message)
-        else:
-            await self.bot.say("Sorry, my owner is offline, try again later?")
 
     @commands.command(pass_context=True)
     async def botinfo(self):
-        """Displays stuff about ME!"""
+        """Shows info about the MonsterLyrics bot"""
         msg = "Hey there! I'm a _fully modular_ bot made by Twentysix and modified by the ***MonsterLyrics Team***.\n"
         msg += "Some stuff about me:\n"
         msg += "\n"
         msg += "**Language:** Python/discord.py\n"
         msg += "**Owner:** <@!116079569349378049>\n"
-        msg += "**Scrutinise my code:** <http://github.fishyfing.xyz>\n"
-        msg += "**Need more help? Drop me an email!** support@bot.fishyfing.xyz\n"
+        msg += "**Scrutinise my code:** <https://fishyfing.xyz/github>\n"
+        msg += "**Need more help? Visit the official server and ping me!** <https://discord.me/Red-DiscordBot>\n"
         msg += "**More info:** <https://fishyfing.xyz/bot.html/>\n"
-        msg += "**Want me on your server? Use this link:** <http://invite.fishyfing.xyz>"
-        await self.bot.say(msg)
+        msg += "**Want me on your server? Use this link:** <https://fishyfing.xyz/invite>"
+        await self.bot.say(msg) 
 
     # @commands.group(pass_context=True, no_pm=True)
     # async def welcome(self, ctx):
