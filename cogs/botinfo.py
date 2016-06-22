@@ -29,7 +29,7 @@ class BotInfo:
     @property
     def join_message(self):
         ret = bold("Hey there!") + "\n"
-        ret += "I'm a bot made by the ***MonsterLyrics Team*** and I just got asked to join this server.\n"
+        ret += "I'm a bot made by ***fishyfing*** and I just got asked to join this server.\n"
         ret += "If you don't want me here feel free to kick me.\n"
         ret += "Otherwise, my current prefixes are " + self.prefixes
         ret += " and you can see all of my commands by running "
@@ -56,8 +56,8 @@ class BotInfo:
 
     @commands.command(pass_context=True)
     async def botinfo(self):
-        """Shows info about the MonsterLyrics bot"""
-        msg = "Hey there! I'm a _fully modular_ bot made by Twentysix and modified by the ***MonsterLyrics Team***.\n"
+        """Shows info about Fishbot"""
+        msg = "Hey there! I'm a _fully modular_ bot made by Twentysix and modified by ***fishyfing***.\n"
         msg += "Some stuff about me:\n"
         msg += "\n"
         msg += "**Language:** Python/discord.py\n"

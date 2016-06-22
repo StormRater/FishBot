@@ -419,8 +419,8 @@ class Owner:
  
     @commands.command() 
     async def info(self): 
-        """Shows info about the MonsterLyrics bot"""
-        msg = "Hey there! I'm a _fully modular_ bot made by Twentysix and modified by the ***MonsterLyrics Team***.\n"
+        """Shows info about Fishbot"""
+        msg = "Hey there! I'm a _fully modular_ bot made by Twentysix and modified by ***fishyfing***.\n"
         msg += "Some stuff about me:\n"
         msg += "\n"
         msg += "**Language:** Python/discord.py\n"
