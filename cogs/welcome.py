@@ -98,9 +98,6 @@ class Welcome:
             return
         channel = self.get_welcome_channel(server)
         if self.speak_permissions(server):
-            if hasattr(user, 'bot') and user.bot is True:
-                await self.bot.send_message(channel, "Oh look! A new bot! {} just joined the server!".format(member.name))
-            else:
                 await self.bot.send_message(channel, self.settings[server.id]["GREETING"].format(member, server))
         else:
             print("Permissions Error. User that joined: {0.name}".format(member))
