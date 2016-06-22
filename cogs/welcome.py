@@ -100,8 +100,6 @@ class Welcome:
         if self.speak_permissions(server):
             if hasattr(user, 'bot') and user.bot is True:
                 await self.bot.send_message(channel, "Oh look! A new bot! {} just joined the server!".format(member.name))
-                if server.id == "152379357862690816":
-                    await self.add_roles(member, "Boats")
             else:
                 await self.bot.send_message(channel, self.settings[server.id]["GREETING"].format(member, server))
         else:
