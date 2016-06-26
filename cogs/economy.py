@@ -493,8 +493,9 @@ class Economy:
         fileIO("data/economy/settings.json", "save", self.settings)
 
     @economyset.command()
-    async def currencyname(self, currency : str):
+    async def currencyname(self, ctx, currency : str):
         """Name of your currency"""
+        server = ctx.message.server
         self.settings[server.id]["CURRENCY_NAME"] = currency
         await self.bot.say("Your currency will now be called " + str(currency) + ".")
         fileIO("data/economy/settings.json", "save", self.settings)
