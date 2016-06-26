@@ -211,14 +211,14 @@ class Economy:
 
     @_bank.command(pass_context=True, no_pm=True)
     async def register(self, ctx):
-        """Registers an account at the Twentysix bank"""
+        """Registers an account at the FishBot bank"""
         user = ctx.message.author
         try:
             account = self.bank.create_account(user)
             await self.bot.say("{} Account opened. Current balance: {}".format(user.mention,
                 account.balance))
         except AccountAlreadyExists:
-            await self.bot.say("{} You already have an account at the Twentysix bank.".format(user.mention))
+            await self.bot.say("{} You already have an account at the FishBot bank.".format(user.mention))
 
     @_bank.command(pass_context=True)
     async def balance(self, ctx, user : discord.Member=None):
@@ -230,7 +230,7 @@ class Economy:
             try:
                 await self.bot.say("{} Your balance is: {}".format(user.mention, self.bank.get_balance(user)))
             except NoAccount:
-                await self.bot.say("{} You don't have an account at the Twentysix bank."
+                await self.bot.say("{} You don't have an account at the FishBot bank."
                  " Type {}bank register to open one.".format(user.mention, ctx.prefix))
         else:
             try:
@@ -490,6 +490,13 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_CREDITS"] = credits
         await self.bot.say("Every payday will now give " + str(credits) + " credits.")
+        fileIO("data/economy/settings.json", "save", self.settings)
+
+    @economyset.command()
+    async def currencyname(self, currency : str):
+        """Name of your currency"""
+        self.settings[server.id]["CURRENCY_NAME"] = currency
+        await self.bot.say("Your currency will now be called " + str(currency) + ".")
         fileIO("data/economy/settings.json", "save", self.settings)
 
     def display_time(self, seconds, granularity=2): # What would I ever do without stackoverflow?
