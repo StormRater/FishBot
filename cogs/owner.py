@@ -394,7 +394,7 @@ class Owner:
     @commands.command(pass_context=True)
     async def users(self, ctx):
         """Current total user count"""
-        users = len(set(bot.get_all_members()))
+        users = len(set(self.bot.get_all_members()))
         await self.bot.say(users)    
 
     @commands.command(pass_context=True) 
