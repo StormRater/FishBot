@@ -372,7 +372,7 @@ class Owner:
     async def servers(self, ctx):
         """Lists and allows to leave servers"""
         owner = ctx.message.author
-        servers = list.sorted(self.bot.servers)
+        servers = list(self.bot.servers)
         server_list = {}
         msg = ""
         for i in range(0, len(servers)):
