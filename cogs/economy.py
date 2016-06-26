@@ -492,7 +492,7 @@ class Economy:
         await self.bot.say("Every payday will now give " + str(credits) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
-    @economyset.command()
+    @economyset.command(pass_context=True)
     async def currencyname(self, ctx, currency : str):
         """Name of your currency"""
         server = ctx.message.server
