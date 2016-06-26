@@ -16,7 +16,7 @@ import time
 import inspect
 
 __author__ = "tekulvw"
-__version__ = "0.0.1"
+__version__ = "0.1.1"
 
 log = logging.getLogger("red.audio")
 
@@ -582,13 +582,6 @@ class Audio:
             log.exception(e)
             raise ConnectTimeout("We timed out connecting to a voice channel")
 
-    def _kill_player(self, server):
-        try:
-            self.voice_client(server).audio_player.process.kill()
-        except AttributeError:
-            pass
-        except ProcessLookupError:
-            pass
 
     def _list_local_playlists(self):
         ret = []
@@ -932,7 +925,6 @@ class Audio:
 
         if hasattr(voice_client, 'audio_player'):
             voice_client.audio_player.stop()
-            self._kill_player(server)
             del voice_client.audio_player
 
     # no return. they can check themselves. 
