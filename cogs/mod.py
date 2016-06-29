@@ -70,7 +70,7 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def ban(self, ctx, user: discord.Member, days: int=0, *reason):
+    async def ban(self, ctx, user: discord.Member, *days: int=0, **reason):
         """Bans user and deletes last X days worth of messages.
 
         Minimum 0 days, maximum 7. Defaults to 0."""
@@ -676,13 +676,21 @@ class Mod:
     async def check_names(self, before, after):
         if before.name != after.name:
             if before.id not in self.past_names.keys():
-                self.past_names[before.id] = [after.name] 
+                                self.past_names[before.id] = [after.name] 
             else: 
                 if after.name not in self.past_names[before.id]: 
                     names = deque(self.past_names[before.id], maxlen=20) 
                     names.append(after.name) 
                     self.past_names[before.id] = list(names) 
             dataIO.save_json("data/mod/past_names.json", self.past_names) 
+ 
+        if before.nick != after.nick and after.nick is not None: 
+            server = before.server 
+            if not server.id in self.past_nicknames: 
+                self.past_nicknames[server.id] = {} 
+            if before.id in self.past_nicknames[server.id]: 
+                nicks = deque(self.past_nicknames[server.id][before.id], 
+                              maxlen=20) 
         else:
             nicks = [] 
             if after.nick not in nicks: 
