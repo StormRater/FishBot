@@ -597,29 +597,29 @@ class Mod:
 
     @commands.command()
     async def names(self, user : discord.Member):
-        """Show previous names/nicknames of a user""" 
-        server = user.server 
-        names = self.past_names[user.id] if user.id in self.past_names else None 
-        try: 
-            nicks = self.past_nicknames[server.id][user.id] 
-            nicks = [escape_mass_mentions(nick) for nick in nicks] 
-        except: 
-            nicks = None 
-        msg = "" 
-        if names: 
-            names = [escape_mass_mentions(name) for name in names] 
-            msg += "**Past 20 names**:\n" 
-            msg += ", ".join(names) 
-        if nicks: 
-            if msg: 
-                msg += "\n\n" 
-            msg += "**Past 20 nicknames**:\n" 
-            msg += ", ".join(nicks) 
-        if msg: 
+        """Show previous names/nicknames of a user"""
+        server = user.server
+        names = self.past_names[user.id] if user.id in self.past_names else None
+        try:
+            nicks = self.past_nicknames[server.id][user.id]
+            nicks = [escape_mass_mentions(nick) for nick in nicks]
+        except:
+            nicks = None
+        msg = ""
+        if names:
+            names = [escape_mass_mentions(name) for name in names]
+            msg += "**Past 20 names**:\n"
+            msg += ", ".join(names)
+        if nicks:
+            if msg:
+                msg += "\n\n"
+            msg += "**Past 20 nicknames**:\n"
+            msg += ", ".join(nicks)
+        if msg:
             await self.bot.say(msg)
         else:
-            await self.bot.say("That user doesn't have any recorded name or " 
-                               "nickname change.") 
+            await self.bot.say("That user doesn't have any recorded name or "
+                               "nickname change.")
 
     def discordpy_updated(self):
         try:
@@ -676,28 +676,28 @@ class Mod:
     async def check_names(self, before, after):
         if before.name != after.name:
             if before.id not in self.past_names.keys():
-                                self.past_names[before.id] = [after.name] 
-            else: 
-                if after.name not in self.past_names[before.id]: 
-                    names = deque(self.past_names[before.id], maxlen=20) 
-                    names.append(after.name) 
-                    self.past_names[before.id] = list(names) 
-            dataIO.save_json("data/mod/past_names.json", self.past_names) 
- 
-        if before.nick != after.nick and after.nick is not None: 
-            server = before.server 
-            if not server.id in self.past_nicknames: 
-                self.past_nicknames[server.id] = {} 
-            if before.id in self.past_nicknames[server.id]: 
-                nicks = deque(self.past_nicknames[server.id][before.id], 
-                              maxlen=20) 
-        else:
-            nicks = [] 
-            if after.nick not in nicks: 
-                nicks.append(after.nick) 
-                self.past_nicknames[server.id][before.id] = list(nicks) 
-                dataIO.save_json("data/mod/past_nicknames.json", 
-                                 self.past_nicknames) 
+                self.past_names[before.id] = [after.name]
+            else:
+                if after.name not in self.past_names[before.id]:
+                    names = deque(self.past_names[before.id], maxlen=20)
+                    names.append(after.name)
+                    self.past_names[before.id] = list(names)
+            dataIO.save_json("data/mod/past_names.json", self.past_names)
+
+        if before.nick != after.nick and after.nick is not None:
+            server = before.server
+            if not server.id in self.past_nicknames:
+                self.past_nicknames[server.id] = {}
+            if before.id in self.past_nicknames[server.id]:
+                nicks = deque(self.past_nicknames[server.id][before.id],
+                              maxlen=20)
+            else:
+                nicks = []
+            if after.nick not in nicks:
+                nicks.append(after.nick)
+                self.past_nicknames[server.id][before.id] = list(nicks)
+                dataIO.save_json("data/mod/past_nicknames.json",
+                                 self.past_nicknames)
 
 def check_folders():
     folders = ("data", "data/mod/")
