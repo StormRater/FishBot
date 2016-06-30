@@ -31,7 +31,7 @@ class BotInfo:
         ret = bold("Hey there!") + "\n"
         ret += "I'm a bot made by ***fishyfing*** and I just got asked to join this server.\n"
         ret += "If you don't want me here feel free to kick me.\n"
-        ret += "Otherwise, my current prefixes are " + self.prefixes
+        ret += "Otherwise, my current prefixes are `!`, `@FishBot#9627` or `§`"
         ret += " and you can see all of my commands by running "
         ret += inline("!help")
         ret += "\n\n"
