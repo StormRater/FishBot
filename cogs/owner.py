@@ -391,12 +391,6 @@ class Owner:
             else:
                 break
 
-    @commands.command(pass_context=True)
-    async def users(self, ctx):
-        """Current total user count"""
-        users = len(set(self.bot.get_all_members()))
-        await self.bot.say(users)    
-
     @commands.command(pass_context=True) 
     async def contact(self, ctx, *, message : str): 
         """Sends message to the owner""" 
