@@ -226,8 +226,12 @@ class General:
                 definition = result['list'][pos]['definition'] 
                 example = result['list'][pos]['example'] 
                 defs = len(result['list']) 
-                await self.bot.say("**Definition #{} out of {}:\n**{}\n\n" 
-                    "**Example:\n**{}".format(pos+1, defs, definition, example)) 
+                msg = ("**Definition #{} out of {}:\n**{}\n\n" 
+                       "**Example:\n**{}".format(pos+1, defs, definition, 
+                                                 example)) 
+                msg = pagify(msg, ["\n"]) 
+                for page in msg: 
+                    await self.bot.say(page)
             else:
                 await self.bot.say("Your search terms gave no results.")
         except IndexError: 

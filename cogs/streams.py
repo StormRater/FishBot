@@ -321,9 +321,11 @@ class Streams:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         channel_obj = self.bot.get_channel(channel)
+                        if channel_obj is None: 
+                            continue 
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
-                            await self.bot.send_message(self.bot.get_channel(channel), "@here :video_camera:  ***" + stream["NAME"] + "***  **is live !!!** :video_game: ***" + online["game"] + "***\n*" + online["channel"]["status"] + "*\nhttps://twitch.tv/" + stream["NAME"])
+                            await self.bot.send_message(self.bot.get_channel(channel), ":video_camera:  ***" + stream["NAME"] + "***  **is live !!!** :video_game: ***" + online["game"] + "***\n*" + online["channel"]["status"] + "*\nhttps://twitch.tv/" + stream["NAME"])
                 else:
                     if stream["ALREADY_ONLINE"] and not online:
                         stream["ALREADY_ONLINE"] = False
@@ -335,6 +337,8 @@ class Streams:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         channel_obj = self.bot.get_channel(channel)
+                        if channel_obj is None: 
+                            continue 
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
                             await self.bot.send_message(
@@ -352,6 +356,8 @@ class Streams:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         channel_obj = self.bot.get_channel(channel)
+                        if channel_obj is None: 
+                            continue 
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
                             await self.bot.send_message(
