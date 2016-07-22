@@ -33,13 +33,13 @@ class BotInfo:
         ret += "If you don't want me here feel free to kick me.\n"
         ret += "Otherwise, my current prefixes are `#`, `@FishBot#9627` or `§`"
         ret += " and you can see all of my commands by running "
-        ret += inline("!help")
+        ret += inline("#help")
         ret += "\n\n"
         ret += italics("If you need help, or something goes wrong:") + " "
-        ret += inline("!contact [message]")
+        ret += inline("#contact [message]")
         ret += " and it will be sent to my owner.\n"
         ret += "I can also do " + bold('Twitch Emotes') + "!\n"
-        ret += "See " + inline("!help Emotes")
+        ret += "See " + inline("#help Emotes")
         return ret
 
     # @commands.command()

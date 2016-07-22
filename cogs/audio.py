@@ -15,7 +15,7 @@ import math
 import time
 import inspect
 
-__author__ = "tekulvw"
+__author__ = "fishyfing"
 __version__ = "0.1.1"
 
 log = logging.getLogger("red.audio")
