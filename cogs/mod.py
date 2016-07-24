@@ -21,6 +21,7 @@ class Mod:
         self.filter = dataIO.load_json("data/mod/filter.json") 
         self.past_names = dataIO.load_json("data/mod/past_names.json") 
         self.past_nicknames = dataIO.load_json("data/mod/past_nicknames.json")
+        modlog = self.bot.get_channel('206789179500265472')
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
@@ -62,7 +63,14 @@ class Mod:
             await self.bot.kick(user)
             logger.info("{}({}) kicked {}({})".format(
                 author.name, author.id, user.name, user.id))
-            await self.bot.say("**{}** was kicked by **{}**.\nReason: `{}`".format(user.name, author.name, var))
+            try: # We don't want blocked DMs preventing us from banning 
+                msg = await self.bot.send_message(user, "You have been kicked on `{}` for `{}`".format(ctx.message.server, var)) 
+            except: 
+                pass 
+            if ctx.message.server.id is '152379357862690816':
+                await self.bot.send_message(modlog,"\N{WOMANS BOOTS} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var)))
+            else:
+                await self.bot.say("\N{WOMANS BOOTS} **{}** was kicked by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
@@ -83,7 +91,14 @@ class Mod:
             await self.bot.ban(user, days)
             logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
                 author.name, author.id, user.name, user.id, str(days)))
-            await self.bot.say("**{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}`".format(user.name, author.name, days, var))
+            try: # We don't want blocked DMs preventing us from banning 
+                msg = await self.bot.send_message(user, "You have been banned from `{}` for `{}`".format(ctx.message.server, var)) 
+            except: 
+                pass 
+            if ctx.message.server.id is '152379357862690816':
+                await self.bot.send_message(modlog,"\N{HAMMER} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var)))
+            else:
+                await self.bot.say("\N{HAMMER} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
@@ -101,17 +116,18 @@ class Mod:
         if can_ban: 
             try: 
                 try: # We don't want blocked DMs preventing us from banning 
-                    msg = await self.bot.send_message(user, "You have been banned and " 
-                              "then unbanned as a quick way to delete your messages.\n" 
-                              "You can now join the server again.") 
+                    msg = await self.bot.send_message(user, "You have been softbanned on `{}` for `{}`".format(ctx.message.server, var)) 
                 except: 
                     pass 
                 await self.bot.ban(user, 1) 
                 logger.info("{}({}) softbanned {}({}), deleting 1 day worth "  
                     "of messages".format(author.name, author.id, user.name, 
                      user.id)) 
-                await self.bot.unban(server, user) 
-                await self.bot.say("**{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}`".format(user.name, author.name, days, var))
+                await self.bot.unban(server, user)
+                if ctx.message.server.id is '152379357862690816':
+                    await self.bot.send_message(modlog,"\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))) 
+                else:
+                    await self.bot.say("\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
             except discord.errors.Forbidden: 
                 await self.bot.say("My role is not high enough to softban that user.") 
                 await self.bot.delete_message(msg) 
@@ -120,6 +136,9 @@ class Mod:
         else: 
             await self.bot.say("I'm not allowed to do that.") 
  
+    # async def check_roles(self, before, after):
+    #     if "206800563017482240" is not in before.roles and is in after.roles:
+    #         await self.bot.send_message('206789179500265472', '\N{ZIPPER-MOUTH FACE} **{}#{}** was muted.'.format(after.name, after.discriminator))
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(manage_nicknames=True)
