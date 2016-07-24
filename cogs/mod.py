@@ -66,10 +66,7 @@ class Mod:
                 msg = await self.bot.send_message(user, "You have been kicked on `{}` for `{}`".format(ctx.message.server, var)) 
             except: 
                 pass 
-            if ctx.message.server.id == '152379357862690816':
-                await self.bot.send_message(self.bot.get_channel('206789179500265472'),"\N{WOMANS BOOTS} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
-            else:
-                await self.bot.say("\N{WOMANS BOOTS} **{}** was kicked by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
+            await self.bot.say("\N{WOMANS BOOTS} **{}** was kicked by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
@@ -93,11 +90,8 @@ class Mod:
             try: # We don't want blocked DMs preventing us from banning 
                 msg = await self.bot.send_message(user, "You have been banned from `{}` for `{}`".format(ctx.message.server, var)) 
             except: 
-                pass 
-            if ctx.message.server.id == '152379357862690816':
-                await self.bot.send_message(self.bot.get_channel('206789179500265472'),"\N{HAMMER} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
-            else:
-                await self.bot.say("\N{HAMMER} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
+                pass
+            await self.bot.say("\N{HAMMER} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
@@ -123,10 +117,7 @@ class Mod:
                     "of messages".format(author.name, author.id, user.name, 
                      user.id)) 
                 await self.bot.unban(server, user)
-                if ctx.message.server.id == '152379357862690816':
-                    await self.bot.send_message(self.bot.get_channel('206789179500265472'),"\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
-                else:
-                    await self.bot.say("\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
+                await self.bot.say("\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
             except discord.errors.Forbidden: 
                 await self.bot.say("My role is not high enough to softban that user.") 
                 await self.bot.delete_message(msg) 
