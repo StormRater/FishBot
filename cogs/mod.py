@@ -67,7 +67,7 @@ class Mod:
             except: 
                 pass 
             if ctx.message.server.id is '152379357862690816':
-                await self.bot.send_message(self.bot.get_channel('206789179500265472'),"\N{WOMANS BOOTS} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
+                await self.bot.send_message('206789179500265472',"\N{WOMANS BOOTS} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
             else:
                 await self.bot.say("\N{WOMANS BOOTS} **{}** was kicked by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
         except discord.errors.Forbidden:
@@ -95,7 +95,7 @@ class Mod:
             except: 
                 pass 
             if ctx.message.server.id is '152379357862690816':
-                await self.bot.send_message(self.bot.get_channel('206789179500265472'),"\N{HAMMER} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
+                await self.bot.send_message('206789179500265472',"\N{HAMMER} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
             else:
                 await self.bot.say("\N{HAMMER} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
         except discord.errors.Forbidden:
@@ -124,7 +124,7 @@ class Mod:
                      user.id)) 
                 await self.bot.unban(server, user)
                 if ctx.message.server.id is '152379357862690816':
-                    await self.bot.send_message(self.bot.get_channel('206789179500265472'),"\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
+                    await self.bot.send_message('206789179500265472',"\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
                 else:
                     await self.bot.say("\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
             except discord.errors.Forbidden: 
