@@ -125,7 +125,7 @@ class Mod:
                      user.id)) 
                 await self.bot.unban(server, user)
                 if ctx.message.server.id is '152379357862690816':
-                    await self.bot.send_message(modlog,"\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var)))
+                    await self.bot.send_message(modlog,"\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
                 else:
                     await self.bot.say("\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
             except discord.errors.Forbidden: 
