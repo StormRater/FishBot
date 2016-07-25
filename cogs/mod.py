@@ -96,6 +96,7 @@ class Mod:
             except: 
                 pass 
             if ctx.message.server.id == '152379357862690816':
+                await self.bot.say('\U0001F44C\U0001F3FC')
                 await self.bot.send_message(self.bot.get_channel('206789179500265472'),"\N{HAMMER} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
             else:
                 await self.bot.say("\N{HAMMER} **{}** was banned by **{}**.\nCleared {} days worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, days, var))
@@ -125,6 +126,7 @@ class Mod:
                      user.id)) 
                 await self.bot.unban(server, user)
                 if ctx.message.server.id == '152379357862690816':
+                    await self.bot.say('\U0001F44C\U0001F3FC')
                     await self.bot.send_message(self.bot.get_channel('206789179500265472'),"\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
                 else:
                     await self.bot.say("\N{WASTEBASKET} **{}** was softbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
@@ -136,9 +138,10 @@ class Mod:
         else: 
             await self.bot.say("I'm not allowed to do that.") 
  
-    # async def check_roles(self, before, after):
-    #     if "206800563017482240" is not in before.roles and is in after.roles:
-    #         await self.bot.send_message('206789179500265472', '\N{ZIPPER-MOUTH FACE} **{}#{}** was muted.'.format(after.name, after.discriminator))
+    # async def check_roles(self, ctx, user: discord.Member):
+    #     if 'Timeout' in [r.name for r in user.roles]:
+    #         await self.bot.send_message(self.bot.get_channel('206789179500265472'), '\N{ZIPPER-MOUTH FACE} **{}** was muted.'.format(ctx.message.author))
+
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(manage_nicknames=True)
