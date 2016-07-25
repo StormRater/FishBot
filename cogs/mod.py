@@ -67,6 +67,7 @@ class Mod:
             except: 
                 pass 
             if ctx.message.server.id == '152379357862690816':
+                await self.bot.say('\U0001F44C\U0001F3FC')
                 await self.bot.send_message(self.bot.get_channel('206789179500265472'),"\N{WOMANS BOOTS} **{}** was kicked by **{}**.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
             else:
                 await self.bot.say("\N{WOMANS BOOTS} **{}** was kicked by **{}**.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
