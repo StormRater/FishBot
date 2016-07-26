@@ -138,10 +138,7 @@ class Mod:
         else: 
             await self.bot.say("I'm not allowed to do that.") 
  
-    # async def check_roles(self, ctx, user: discord.Member):
-    #     if 'Timeout' in [r.name for r in user.roles]:
-    #         await self.bot.send_message(self.bot.get_channel('206789179500265472'), '\N{ZIPPER-MOUTH FACE} **{}** was muted.'.format(ctx.message.author))
-
+    
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(manage_nicknames=True)
@@ -694,6 +691,17 @@ class Mod:
                         pass
                     print("Message deleted. Filtered: " + w)
 
+    async def check_roles(self, before, after):
+        server = before.server
+        if server.id == '152379357862690816':
+            r = discord.utils.get(server.roles, name="Timeout")
+            if 'Timeout' in [r.name for r in after.roles]:
+                if 'Timeout' not in [r.name for r in before.roles]:
+                    await self.bot.send_message(self.bot.get_channel('206789179500265472'), '\N{SPEAKER WITH CANCELLATION STROKE} **{}** was muted.'.format(before.name))
+            elif 'Timeout' not in [r.name for r in after.roles]:
+                if 'Timeout' in [r.name for r in before.roles]:
+                    await self.bot.send_message(self.bot.get_channel('206789179500265472'), '\N{SPEAKER WITH THREE SOUND WAVES} **{}** was unmuted.'.format(before.name))
+
 
     async def check_names(self, before, after):
         if before.name != after.name:
@@ -774,4 +782,5 @@ def setup(bot):
     n = Mod(bot)
     bot.add_listener(n.check_filter, "on_message")
     bot.add_listener(n.check_names, "on_member_update")
+    bot.add_listener(n.check_roles, "on_memeber_update")
     bot.add_cog(n)
