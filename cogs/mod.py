@@ -136,9 +136,37 @@ class Mod:
             except Exception as e: 
                 print(e) 
         else: 
-            await self.bot.say("I'm not allowed to do that.") 
- 
-    
+            await self.bot.say("I'm not allowed to do that.")
+
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
+    async def unban(self,ctx, user:discord.Member, *reason):
+        """Unbans a user"""
+        server = ctx.message.server
+        channel = ctx.message.channel 
+        can_ban = channel.permissions_for(server.me).ban_members 
+        author = ctx.message.author 
+        var = " ".join(reason)
+        if can_ban:
+            try:
+                try:
+                    msg = await self.bot.send_message(user, "You have been unbanned on `{}` for `{}`".format(ctx.message.server, var))
+                except:
+                    pass
+                await self.bot.unban(server, user)
+                if ctx.message.server.id == '152379357862690816':
+                    await self.bot.say('\U0001F44C\U0001F3FC')
+                    await self.bot.send_message(self.bot.get_channel('206789179500265472'),"\N{SMILING FACE WITH OPEN MOUTH AND COLD SWEAT} **{}** was unbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
+                else:
+                    await self.bot.say("\N{SMILING FACE WITH OPEN MOUTH AND COLD SWEAT} **{}** was unbanned by **{}**.\nCleared 1 day worth of messages.\nReason: `{}` \N{EYES}".format(user.name, author.name, var))
+            except discord.errors.Forbidden: 
+                await self.bot.say("My role is not high enough to unban that user.") 
+                await self.bot.delete_message(msg) 
+            except Exception as e: 
+                print(e) 
+        else: 
+            await self.bot.say("I'm not allowed to do that.")
+
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(manage_nicknames=True)
