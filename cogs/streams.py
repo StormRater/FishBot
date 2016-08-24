@@ -1,8 +1,9 @@
 import discord
 from discord.ext import commands
 from .utils.dataIO import fileIO
+from .utils.chat_formatting import *
 from .utils import checks
-from .utils.chat_formatting import * 
+from __main__ import send_cmd_help
 import os
 import time
 import aiohttp
@@ -21,11 +22,12 @@ class Streams:
         self.twitch_streams = fileIO("data/streams/twitch.json", "load")
         self.hitbox_streams = fileIO("data/streams/hitbox.json", "load")
         self.beam_streams = fileIO("data/streams/beam.json", "load")
+        self.settings = fileIO("data/streams/settings.json", "load")
 
     @commands.command()
     async def hitbox(self, stream: str):
         """Checks if hitbox stream is online"""
-        stream = escape_mass_mentions(stream) 
+        stream = escape_mass_mentions(stream)
         online = await self.hitbox_online(stream)
         if online is True:
             await self.bot.say("http://www.hitbox.tv/{}/"
@@ -40,10 +42,11 @@ class Streams:
     @commands.command()
     async def twitch(self, stream: str):
         """Checks if twitch stream is online"""
-        stream = escape_mass_mentions(stream) 
+        stream = escape_mass_mentions(stream)
         online = await self.twitch_online(stream)
-        if online and online != "error":
-            await self.bot.say(":video_camera:  ***" + stream + "***  **is live !!!** :video_game: ***" + online["game"] + "***\n*" + online["channel"]["status"] + "*\nhttps://twitch.tv/" + stream)
+        if online is True:
+            await self.bot.say("http://www.twitch.tv/{} "
+                               "is online!".format(stream))
         elif online is False:
             await self.bot.say(stream + " is offline.")
         elif online is None:
@@ -54,7 +57,7 @@ class Streams:
     @commands.command()
     async def beam(self, stream: str):
         """Checks if beam stream is online"""
-        stream = escape_mass_mentions(stream) 
+        stream = escape_mass_mentions(stream)
         online = await self.beam_online(stream)
         if online is True:
             await self.bot.say("https://beam.pro/{} is online!".format(stream))
@@ -70,12 +73,12 @@ class Streams:
     async def streamalert(self, ctx):
         """Adds/removes stream alerts from the current channel"""
         if ctx.invoked_subcommand is None:
-            await self.bot.say("Type help streamalert for info.")
+            await send_cmd_help(ctx)
 
     @streamalert.command(name="twitch", pass_context=True)
     async def twitch_alert(self, ctx, stream: str):
         """Adds/removes twitch alerts from the current channel"""
-        stream = escape_mass_mentions(stream) 
+        stream = escape_mass_mentions(stream)
         channel = ctx.message.channel
         check = await self.twitch_exists(stream)
         if check is False:
@@ -119,7 +122,7 @@ class Streams:
     @streamalert.command(name="hitbox", pass_context=True)
     async def hitbox_alert(self, ctx, stream: str):
         """Adds/removes hitbox alerts from the current channel"""
-        stream = escape_mass_mentions(stream) 
+        stream = escape_mass_mentions(stream)
         channel = ctx.message.channel
         check = await self.hitbox_online(stream)
         if check is None:
@@ -163,7 +166,7 @@ class Streams:
     @streamalert.command(name="beam", pass_context=True)
     async def beam_alert(self, ctx, stream: str):
         """Adds/removes beam alerts from the current channel"""
-        stream = escape_mass_mentions(stream) 
+        stream = escape_mass_mentions(stream)
         channel = ctx.message.channel
         check = await self.beam_online(stream)
         if check is None:
@@ -252,6 +255,22 @@ class Streams:
         await self.bot.say("There will be no more stream alerts in this "
                            "channel.")
 
+    @commands.group(pass_context=True)
+    @checks.is_owner()
+    async def streamset(self, ctx):
+        """Stream settings"""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+
+    @streamset.command()
+    async def twitchtoken(self, token : str):
+        """Sets the Client-ID for Twitch
+
+        https://blog.twitch.tv/client-id-required-for-kraken-api-calls-afbb8e95f843"""
+        self.settings["TWITCH_TOKEN"] = token
+        fileIO("data/streams/settings.json", "save", self.settings)
+        await self.bot.say('Twitch Client-ID set.')
+
     async def hitbox_online(self, stream):
         url = "https://api.hitbox.tv/user/" + stream
         try:
@@ -268,11 +287,12 @@ class Streams:
 
     async def twitch_online(self, stream):
         url = "https://api.twitch.tv/kraken/streams?channel=" + stream
+        header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
         try:
-            async with aiohttp.get(url) as r:
+            async with aiohttp.get(url, headers=header) as r:
                 data = await r.json()
             if len(data["streams"]) > 0:
-                return data["streams"][0]
+                return True
             else:
                 return False
         except:
@@ -317,15 +337,18 @@ class Streams:
 
             for stream in self.twitch_streams:
                 online = await self.twitch_online(stream["NAME"])
-                if online and online != "error" and not stream["ALREADY_ONLINE"]:
+                if online is True and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         channel_obj = self.bot.get_channel(channel)
-                        if channel_obj is None: 
-                            continue 
+                        if channel_obj is None:
+                            continue
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
-                            await self.bot.send_message(self.bot.get_channel(channel), ":video_camera:  ***" + stream["NAME"] + "***  **is live !!!** :video_game: ***" + online["game"] + "***\n*" + online["channel"]["status"] + "*\nhttps://twitch.tv/" + stream["NAME"])
+                            await self.bot.send_message(
+                                self.bot.get_channel(channel),
+                                "http://www.twitch.tv/"
+                                "{} is online!".format(stream["NAME"]))
                 else:
                     if stream["ALREADY_ONLINE"] and not online:
                         stream["ALREADY_ONLINE"] = False
@@ -337,8 +360,8 @@ class Streams:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         channel_obj = self.bot.get_channel(channel)
-                        if channel_obj is None: 
-                            continue 
+                        if channel_obj is None:
+                            continue
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
                             await self.bot.send_message(
@@ -356,8 +379,8 @@ class Streams:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         channel_obj = self.bot.get_channel(channel)
-                        if channel_obj is None: 
-                            continue 
+                        if channel_obj is None:
+                            continue
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
                             await self.bot.send_message(
@@ -399,6 +422,11 @@ def check_files():
     if not fileIO(f, "check"):
         print("Creating empty beam.json...")
         fileIO(f, "save", [])
+
+    f = "data/streams/settings.json"
+    if not fileIO(f, "check"):
+        print("Creating empty settings.json...")
+        fileIO(f, "save", {})
 
 
 def setup(bot):

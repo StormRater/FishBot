@@ -42,8 +42,9 @@ class SameSenderAndReceiver(BankError):
     pass
 
 class Bank:
-    def __init__(self, bot, file_path): 
-        self.accounts = dataIO.load_json(file_path) 
+    def __init__(self, bot, file_path):
+        self.accounts = dataIO.load_json(file_path)
+        self.bot = bot
 
     def create_account(self, user):
         server = user.server
@@ -61,7 +62,7 @@ class Bank:
             self._save_bank()
             return self.get_account(user)
         else:
-            raise AccountAlreadyExists() 
+            raise AccountAlreadyExists()
 
     def account_exists(self, user):
         try:
@@ -74,7 +75,7 @@ class Bank:
         server = user.server
 
         if amount < 0:
-            raise NegativeValue() 
+            raise NegativeValue()
 
         account = self._get_account(user)
         if account["balance"] >= amount:
@@ -106,7 +107,7 @@ class Bank:
         server = sender.server
         if amount < 0:
             raise NegativeValue()
-        if sender is receiver: 
+        if sender is receiver:
             raise SameSenderAndReceiver()
         if self.account_exists(sender) and self.account_exists(receiver):
             sender_acc = self._get_account(sender)
@@ -166,12 +167,12 @@ class Bank:
         return self._create_account_obj(acc)
 
     def _create_account_obj(self, account):
-        account["member"] = account["server"].get_member(account["id"]) 
-        account["created_at"] = datetime.strptime(account["created_at"], 
-                                                  "%Y-%m-%d %H:%M:%S") 
-        Account = namedtuple("Account", "id name balance " 
-                             "created_at server member") 
-        return Account(**account) 
+        account["member"] = account["server"].get_member(account["id"])
+        account["created_at"] = datetime.strptime(account["created_at"],
+                                                  "%Y-%m-%d %H:%M:%S")
+        Account = namedtuple("Account", "id name balance "
+                             "created_at server member")
+        return Account(**account)
 
     def _save_bank(self):
         dataIO.save_json("data/economy/bank.json", self.accounts)
@@ -191,7 +192,7 @@ class Economy:
     def __init__(self, bot):
         global default_settings
         self.bot = bot
-        self.bank = Bank(bot, "data/economy/bank.json") 
+        self.bank = Bank(bot, "data/economy/bank.json")
         self.settings = fileIO("data/economy/settings.json", "load")
         if "PAYDAY_TIME" in self.settings: #old format
             default_settings = self.settings
@@ -208,14 +209,14 @@ class Economy:
 
     @_bank.command(pass_context=True, no_pm=True)
     async def register(self, ctx):
-        """Registers an account at the FishBot bank"""
+        """Registers an account at the Twentysix bank"""
         user = ctx.message.author
         try:
             account = self.bank.create_account(user)
             await self.bot.say("{} Account opened. Current balance: {}".format(user.mention,
                 account.balance))
         except AccountAlreadyExists:
-            await self.bot.say("{} You already have an account at the FishBot bank.".format(user.mention))
+            await self.bot.say("{} You already have an account at the Twentysix bank.".format(user.mention))
 
     @_bank.command(pass_context=True)
     async def balance(self, ctx, user : discord.Member=None):
@@ -227,7 +228,7 @@ class Economy:
             try:
                 await self.bot.say("{} Your balance is: {}".format(user.mention, self.bank.get_balance(user)))
             except NoAccount:
-                await self.bot.say("{} You don't have an account at the FishBot bank."
+                await self.bot.say("{} You don't have an account at the Twentysix bank."
                  " Type {}bank register to open one.".format(user.mention, ctx.prefix))
         else:
             try:
@@ -487,14 +488,6 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_CREDITS"] = credits
         await self.bot.say("Every payday will now give " + str(credits) + " credits.")
-        fileIO("data/economy/settings.json", "save", self.settings)
-
-    @economyset.command(pass_context=True)
-    async def currencyname(self, ctx, currency : str):
-        """Name of your currency"""
-        server = ctx.message.server
-        self.settings[server.id]["CURRENCY_NAME"] = currency
-        await self.bot.say("Your currency will now be called " + str(currency) + ".")
         fileIO("data/economy/settings.json", "save", self.settings)
 
     def display_time(self, seconds, granularity=2): # What would I ever do without stackoverflow?

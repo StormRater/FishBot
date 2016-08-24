@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from .utils.chat_formatting import *
 from random import randint
 from random import choice as randchoice
 import datetime
@@ -7,7 +8,7 @@ import time
 import aiohttp
 import asyncio
 
-settings = {"POLL_DURATION" : 300}
+settings = {"POLL_DURATION" : 60}
 
 class General:
     """General commands."""
@@ -32,6 +33,7 @@ class General:
 
         To denote multiple choices, you should use double quotes.
         """
+        choices = [escape_mass_mentions(choice) for choice in choices]
         if len(choices) < 2:
             await self.bot.say('Not enough choices to pick from.')
         else:
@@ -45,10 +47,10 @@ class General:
         """
         author = ctx.message.author
         if number > 1:
-            n = str(randint(1, number))
-            return await self.bot.say("{} :game_die: {} :game_die:".format(author.mention, n))
+            n = randint(1, number)
+            await self.bot.say("{} :game_die: {} :game_die:".format(author.mention, n))
         else:
-            return await self.bot.say("{} Maybe higher than 1? ;P".format(author.mention))
+            await self.bot.say("{} Maybe higher than 1? ;P".format(author.mention))
 
     @commands.command(pass_context=True)
     async def flip(self, ctx, user : discord.Member=None):
@@ -64,14 +66,14 @@ class General:
             char = "abcdefghijklmnopqrstuvwxyz"
             tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
             table = str.maketrans(char, tran)
-            name = user.name.translate(table)
+            name = user.display_name.translate(table)
             char = char.upper()
             tran = "∀qƆpƎℲפHIſʞ˥WNOԀQᴚS┴∩ΛMX⅄Z"
             table = str.maketrans(char, tran)
             name = name.translate(table)
-            return await self.bot.say(msg + "(╯°□°）╯︵ " + name[::-1])
+            await self.bot.say(msg + "(╯°□°）╯︵ " + name[::-1])
         else:
-            return await self.bot.say("*flips a coin and... " + randchoice(["HEADS!*", "TAILS!*"]))
+            await self.bot.say("*flips a coin and... " + randchoice(["HEADS!*", "TAILS!*"]))
 
     @commands.command(pass_context=True)
     async def rps(self, ctx, choice : str):
@@ -105,17 +107,16 @@ class General:
         else:
             await self.bot.say("Choose rock, paper or scissors.")
 
-    @commands.command(name="8ball", aliases=["8b"])
-    async def _8ball(self, *question):
+    @commands.command(name="8", aliases=["8ball"])
+    async def _8ball(self, *, question : str):
         """Ask 8 ball a question
 
         Question must end with a question mark.
         """
-        question = " ".join(question)
         if question.endswith("?") and question != "?":
-            return await self.bot.say("`" + randchoice(self.ball) + "`")
+            await self.bot.say("`" + randchoice(self.ball) + "`")
         else:
-            return await self.bot.say("That doesn't look like a question.")
+            await self.bot.say("That doesn't look like a question.")
 
     @commands.command(aliases=["sw"], pass_context=True)
     async def stopwatch(self, ctx):
@@ -127,14 +128,14 @@ class General:
         else:
             tmp = abs(self.stopwatches[author.id] - int(time.perf_counter()))
             tmp = str(datetime.timedelta(seconds=tmp))
-            await self.bot.say(author.mention + " Stopwatch stopped! Time: **" + str(tmp) + "**")
+            await self.bot.say(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
             self.stopwatches.pop(author.id, None)
 
     @commands.command()
     async def lmgtfy(self, *, search_terms : str):
         """Creates a lmgtfy link"""
-        search_terms = search_terms.replace(" ", "+") 
-        await self.bot.say("http://lmgtfy.com/?q={}".format(search_terms)) 
+        search_terms = escape_mass_mentions(search_terms.replace(" ", "+"))
+        await self.bot.say("http://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(no_pm=True, hidden=True)
     async def hug(self, user : discord.Member, intensity : int=1):
@@ -158,30 +159,34 @@ class General:
     async def userinfo(self, ctx, user : discord.Member = None):
         """Shows users's informations"""
         author = ctx.message.author
+        server = ctx.message.server
         if not user:
             user = author
         roles = [x.name for x in user.roles if x.name != "@everyone"]
         if not roles: roles = ["None"]
         data = "```python\n"
-        data += "Name: {}\n".format(user)
-        data += "Nickname: {}\n".format(user.nick)
-        data += "ID: {}\n\n".format(user.id)
-        data += "Status: {}\n".format(user.status)
+        data += "Name: {}\n".format(escape_mass_mentions(str(user)))
+        data += "Nickname: {}\n".format(escape_mass_mentions(str(user.nick)))
+        data += "ID: {}\n".format(user.id)
         if user.game is None:
-            data += "Playing: Nothing\n\n"
+            pass
+        elif user.game.url is None:
+            data += "Playing: {}\n".format(escape_mass_mentions(str(user.game)))
         else:
-            if user.game.url is None:
-                data += "Playing: {}\n\n".format(user.game)
-            else:
-                data += "Streaming: {} (<{}>)\n\n".format(user.game, user.game.url)
+            data += "Streaming: {} ({})\n".format(escape_mass_mentions(str(user.game)),
+                                                      escape_mass_mentions(user.game.url))
         passed = (ctx.message.timestamp - user.created_at).days
         data += "Created: {} ({} days ago)\n".format(user.created_at, passed)
-        passed = (ctx.message.timestamp - user.joined_at).days
-        data += "Joined: {} ({} days ago)\n\n".format(user.joined_at, passed)
+        joined_at = self.fetch_joined_at(user, server)
+        passed = (ctx.message.timestamp - joined_at).days
+        data += "Joined: {} ({} days ago)\n".format(joined_at, passed)
         data += "Roles: {}\n".format(", ".join(roles))
-        data += "Color: {}\n".format(user.color)
-        data += "Avatar: {}\n".format(user.avatar_url)
-        data += "```"
+        if user.avatar_url != "":
+            data += "Avatar:"
+            data += "```"
+            data += user.avatar_url
+        else:
+            data += "```"
         await self.bot.say(data)
 
     @commands.command(pass_context=True, no_pm=True)
@@ -204,65 +209,51 @@ class General:
         passed = (ctx.message.timestamp - server.created_at).days
         data += "Created: {} ({} days ago)\n".format(server.created_at, passed)
         data += "Owner: {}\n".format(server.owner)
-        data += "Icon: {}\n".format(server.icon_url)
-        data += "```"
+        if server.icon_url != "":
+            data += "Icon:"
+            data += "```"
+            data += server.icon_url
+        else:
+            data += "```"
         await self.bot.say(data)
 
-    @commands.command(pass_context=True)
-    async def users(self, ctx):
-        """Current total user count"""
-        server = ctx.message.server
-        user = set(self.bot.get_all_members())
-        online = str(len([m.status for m in user if str(m.status) == "online"]))
-        idle = str(len([m.status for m in user if str(m.status) == "idle"]))
-        offline = str(len([m.status for m in user if str(m.status) == "offline"]))
-        users = str(len(user))
-        msg = "```xl\n"
-        msg += self.bot.user.name + " is serving " + users + " users in total.\n\n"
-        msg += "Online: " + online
-        msg += "\nIdle: " + idle
-        msg += "\nOffline: " + offline
-        msg += "\n```"
-        await self.bot.say(msg)    
-        
     @commands.command()
-    async def urban(self, *, search_terms : str, definition_number : int=1): 
-        """Urban Dictionary search 
- 
-        Definition number must be between 1 and 10""" 
-        # definition_number is just there to show up in the help 
-        # all this mess is to avoid forcing double quotes on the user 
-        """Urban Dictionary search"""
+    async def urban(self, *, search_terms : str, definition_number : int=1):
+        """Urban Dictionary search
+
+        Definition number must be between 1 and 10"""
+        # definition_number is just there to show up in the help
+        # all this mess is to avoid forcing double quotes on the user
         search_terms = search_terms.split(" ")
-        try: 
-            if len(search_terms) > 1: 
-                pos = int(search_terms[-1]) - 1 
-                search_terms = search_terms[:-1] 
-            else: 
-                pos = 0 
-            if pos not in range(0, 11): # API only provides the 
-                pos = 0                 # top 10 definitions 
-        except ValueError: 
-            pos = 0 
+        try:
+            if len(search_terms) > 1:
+                pos = int(search_terms[-1]) - 1
+                search_terms = search_terms[:-1]
+            else:
+                pos = 0
+            if pos not in range(0, 11): # API only provides the
+                pos = 0                 # top 10 definitions
+        except ValueError:
+            pos = 0
         search_terms = "+".join(search_terms)
-        url = "http://api.urbandictionary.com/v0/define?term=" + search_terms 
+        url = "http://api.urbandictionary.com/v0/define?term=" + search_terms
         try:
             async with aiohttp.get(url) as r:
                 result = await r.json()
-            if result["list"]: 
-                definition = result['list'][pos]['definition'] 
-                example = result['list'][pos]['example'] 
-                defs = len(result['list']) 
-                msg = ("**Definition #{} out of {}:\n**{}\n\n" 
-                       "**Example:\n**{}".format(pos+1, defs, definition, 
-                                                 example)) 
-                msg = pagify(msg, ["\n"]) 
-                for page in msg: 
+            if result["list"]:
+                definition = result['list'][pos]['definition']
+                example = result['list'][pos]['example']
+                defs = len(result['list'])
+                msg = ("**Definition #{} out of {}:\n**{}\n\n"
+                       "**Example:\n**{}".format(pos+1, defs, definition,
+                                                 example))
+                msg = pagify(msg, ["\n"])
+                for page in msg:
                     await self.bot.say(page)
             else:
                 await self.bot.say("Your search terms gave no results.")
-        except IndexError: 
-            await self.bot.say("There is no definition #{}".format(pos+1)) 
+        except IndexError:
+            await self.bot.say("There is no definition #{}".format(pos+1))
         except:
             await self.bot.say("Error.")
 
@@ -313,6 +304,12 @@ class General:
             if self.getPollByChannel(message):
                     self.getPollByChannel(message).checkAnswer(message)
 
+    def fetch_joined_at(self, user, server):
+        """Just a special case for someone special :^)"""
+        if user.id == "96130341705637888" and server.id == "133049272517001216":
+            return datetime.datetime(2016, 1, 10, 6, 8, 4, 443000)
+        else:
+            return user.joined_at
 
 class NewPoll():
     def __init__(self, message, main):
@@ -365,7 +362,6 @@ class NewPoll():
                     self.already_voted.append(message.author.id)
         except ValueError:
             pass
-
 
 def setup(bot):
     n = General(bot)
