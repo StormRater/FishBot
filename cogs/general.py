@@ -27,6 +27,24 @@ class General:
         """Pong."""
         await self.bot.say("Pong.")
 
+    @commands.command(pass_context=True) 
+    async def users(self, ctx): 
+        """Current total user count""" 
+        server = ctx.message.server 
+        user = set(self.bot.get_all_members()) 
+        online = str(len([m.status for m in user if str(m.status) == "online"])) 
+        idle = str(len([m.status for m in user if str(m.status) == "idle"])) 
+        offline = str(len([m.status for m in user if str(m.status) == "offline"])) 
+        users = str(len(user)) 
+        msg = "```xl\n" 
+        msg += self.bot.user.name + " is serving " + users + " users in total.\n\n" 
+        msg += "Online: " + online 
+        msg += "\nIdle: " + idle 
+        msg += "\nOffline: " + offline 
+        msg += "\n```" 
+        await self.bot.say(msg)     
+         
+
     @commands.command()
     async def choose(self, *choices):
         """Chooses between multiple choices.
