@@ -44,6 +44,10 @@ class General:
         msg += "\n```" 
         await self.bot.say(msg)     
          
+    @commands.command(pass_context=True, hidden=True)
+    async def xi(self, ctx):
+        if ctx.message.server.id == "152379357862690816":
+            await self.bot.say('STOP QUOTING RULES YOU FUCK')
 
     @commands.command()
     async def choose(self, *choices):
