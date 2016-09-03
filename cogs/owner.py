@@ -3,6 +3,7 @@ from discord.ext import commands
 from cogs.utils import checks
 from __main__ import set_cog, send_cmd_help, settings
 from .utils.dataIO import fileIO
+import subprocess
 
 import importlib
 import traceback

@@ -1,3 +1,4 @@
+import subprocess
 from discord.ext import commands
 from .utils.chat_formatting import *
 from .utils.dataIO import fileIO
